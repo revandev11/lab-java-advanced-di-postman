@@ -17,71 +17,85 @@ In this lab, you will build a more advanced Spring Boot application that conditi
 
 <br />
 <br>
-I designed EarlyBirdDiscountService as a separate service class to keep the controller thin and focused only on handling HTTP requests.
-The discount logic lives in the service layer so it’s easier to:
+Design Choices – EarlyBirdDiscountService
 
-Test the business logic without hitting the API layer
+The EarlyBirdDiscountService was designed as a dedicated service layer component to keep business logic separate from the controller.
 
-Reuse the discount calculation in other places later (e.g., different endpoints)
+This decision was made to:
 
-Maintain the code (logic changes won’t bloat the controller)
+Follow the Single Responsibility Principle
 
-The service is enabled/disabled using a feature flag (e.g., feature.earlybird.enabled) so the same API can behave differently depending on configuration without changing code.
-I used constructor-based dependency injection because it:
+Keep the controller lightweight and focused only on handling HTTP requests
 
-Makes dependencies explicit (you can see what the class needs immediately)
+Improve maintainability and readability
 
-Helps with immutability (final fields) and safer design
+Make the discount logic easier to test independently
 
-Works better for testing (easy to pass mocks/stubs)
+The service calculates the number of days between the booking date and event date.
+If the booking is made 30 or more days in advance, a 20% discount is applied.
 
-Avoids issues that come from field injection (like hidden dependencies)
+Why Constructor-Based Dependency Injection?
 
-Overall, it’s cleaner and more reliable than injecting directly into fields.
-Postman scripts help automate API tests and reduce manual work:
+Constructor-based dependency injection was chosen because:
 
-Pre-request scripts allow:
+It ensures all required dependencies are provided at object creation time
 
-Setting up dynamic variables (dates, random values, tokens)
+It makes dependencies explicit and easier to understand
 
-Logging and preparing test conditions before sending the request
+It improves testability
 
-Post-response scripts allow:
+It follows Spring best practices
 
-Automatic validation of status codes
+It prevents null dependency issues
 
-Checking the response body contains expected text/value
+Constructor injection also supports immutability, which leads to safer and cleaner code.
 
-Running multiple assertions and generating consistent test results
+Advantages of Postman Pre-request and Post-response Scripts
 
-This turns a normal request collection into a repeatable test suite.
-When the early bird feature is disabled (e.g., feature.earlybird.enabled=false):
+Postman scripts improve automated API testing by:
 
-The EarlyBirdDiscountService is not loaded (or not active)
+Allowing validation of response status codes
 
-The API responds gracefully instead of crashing
+Automatically checking response body content
 
-Example behaviors:
+Logging request execution
 
-Returning a message like “Early bird discount is disabled.”
+Supporting reusable testing logic across multiple requests
 
-Or returning a proper HTTP status like 404 / 503 depending on implementation
+Enabling negative test case verification
 
-So the app stays running and the endpoint gives a clear response.
+Pre-request scripts help prepare and log request execution.
+Post-response scripts validate expected behavior automatically.
 
-What are some challenges you faced when integrating advanced DI with API testing?
+This reduces manual testing effort and improves reliability.
 
-Main challenges:
+Behavior When the Early Bird Feature Is Disabled
 
-Bean not found / ApplicationContext errors when the service is conditionally created and the controller still expects it
+When feature.earlybird.enabled=false in application.properties:
 
-Confusion around @ConditionalOnProperty and where the property should be placed (application.properties)
+The service throws an exception
 
-Making sure the API still returns a clean response when the feature is off
+The controller catches the exception
 
-Keeping Postman tests stable while the feature flag changes app behavior (tests must expect different results depending on enabled/disabled mode)
+The application returns HTTP 503 (Service Unavailable)
 
+A message is returned indicating that the early bird feature is disabled
 
+This ensures graceful and controlled error handling.
+
+Challenges Faced
+
+Some challenges encountered during development:
+
+Correctly configuring feature toggling using application properties
+
+Handling exceptions and mapping them to proper HTTP status codes
+
+Ensuring dependency injection was correctly recognized by Spring
+
+Integrating automated Postman scripts with feature-based behavior
+
+Testing both positive and negative scenarios effectively
 
 
 
