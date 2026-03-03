@@ -16,6 +16,107 @@ In this lab, you will build a more advanced Spring Boot application that conditi
 4. In the repository, create a Java project and add the code for the following prompts.
 
 <br />
+<br>
+I designed EarlyBirdDiscountService as a separate service class to keep the controller thin and focused only on handling HTTP requests.
+The discount logic lives in the service layer so it’s easier to:
+
+Test the business logic without hitting the API layer
+
+Reuse the discount calculation in other places later (e.g., different endpoints)
+
+Maintain the code (logic changes won’t bloat the controller)
+
+The service is enabled/disabled using a feature flag (e.g., feature.earlybird.enabled) so the same API can behave differently depending on configuration without changing code.
+I used constructor-based dependency injection because it:
+
+Makes dependencies explicit (you can see what the class needs immediately)
+
+Helps with immutability (final fields) and safer design
+
+Works better for testing (easy to pass mocks/stubs)
+
+Avoids issues that come from field injection (like hidden dependencies)
+
+Overall, it’s cleaner and more reliable than injecting directly into fields.
+Postman scripts help automate API tests and reduce manual work:
+
+Pre-request scripts allow:
+
+Setting up dynamic variables (dates, random values, tokens)
+
+Logging and preparing test conditions before sending the request
+
+Post-response scripts allow:
+
+Automatic validation of status codes
+
+Checking the response body contains expected text/value
+
+Running multiple assertions and generating consistent test results
+
+This turns a normal request collection into a repeatable test suite.
+When the early bird feature is disabled (e.g., feature.earlybird.enabled=false):
+
+The EarlyBirdDiscountService is not loaded (or not active)
+
+The API responds gracefully instead of crashing
+
+Example behaviors:
+
+Returning a message like “Early bird discount is disabled.”
+
+Or returning a proper HTTP status like 404 / 503 depending on implementation
+
+So the app stays running and the endpoint gives a clear response.
+
+What are some challenges you faced when integrating advanced DI with API testing?
+
+Main challenges:
+
+Bean not found / ApplicationContext errors when the service is conditionally created and the controller still expects it
+
+Confusion around @ConditionalOnProperty and where the property should be placed (application.properties)
+
+Making sure the API still returns a clean response when the feature is off
+
+Keeping Postman tests stable while the feature flag changes app behavior (tests must expect different results depending on enabled/disabled mode)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</br>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 ## Submission
 
@@ -49,47 +150,6 @@ Once you finish the assignment, submit a URL link to your repository or your pul
   - In your `application.properties` file, add the property `feature.earlybird.enabled` and set it to either `true` or `false`.
 
 
-
-  
-  <br>  EarlyBirdDiscountService – Design
-
-  I separated the discount logic into EarlyBirdDiscountService to keep the controller clean.
-The controller only handles requests, while the service handles business logic.
-The feature flag (feature.earlybird.enabled) controls whether the discount is active.
-Why Constructor-Based DI?
-I used constructor injection because it makes dependencies clear and required.
-It is safer, easier to test, and considered best practice in Spring.
-Postman Scripts Advantage
-Pre-request scripts help prepare dynamic data before sending requests.
-Post-response scripts automatically validate status codes and response content.
-This makes API testing faster and more automated.
-Behavior When Feature Is Disabled
-When the early bird feature is disabled, the service is not active.
-The API responds gracefully (for example, returning a message or proper HTTP status) instead of crashing.
-Challenges Faced
-Main challenges were handling conditional bean loading, fixing ApplicationContext errors, and making sure API tests worked correctly when the feature flag changed.
-  </br>
-
-  
-  
-
-  
-  
-
-  
-  
-
-  
-  
-
-  
-  
-
-  
-  
-
-  
-  
 <br />
 
 ### 2. Develop and Automate Postman Tests
