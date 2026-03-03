@@ -48,6 +48,48 @@ Once you finish the assignment, submit a URL link to your repository or your pul
 - **Application Configuration:**
   - In your `application.properties` file, add the property `feature.earlybird.enabled` and set it to either `true` or `false`.
 
+
+
+  
+  <br>  EarlyBirdDiscountService – Design
+
+  I separated the discount logic into EarlyBirdDiscountService to keep the controller clean.
+The controller only handles requests, while the service handles business logic.
+The feature flag (feature.earlybird.enabled) controls whether the discount is active.
+Why Constructor-Based DI?
+I used constructor injection because it makes dependencies clear and required.
+It is safer, easier to test, and considered best practice in Spring.
+Postman Scripts Advantage
+Pre-request scripts help prepare dynamic data before sending requests.
+Post-response scripts automatically validate status codes and response content.
+This makes API testing faster and more automated.
+Behavior When Feature Is Disabled
+When the early bird feature is disabled, the service is not active.
+The API responds gracefully (for example, returning a message or proper HTTP status) instead of crashing.
+Challenges Faced
+Main challenges were handling conditional bean loading, fixing ApplicationContext errors, and making sure API tests worked correctly when the feature flag changed.
+  </br>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
 <br />
 
 ### 2. Develop and Automate Postman Tests
